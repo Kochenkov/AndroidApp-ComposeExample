@@ -1,4 +1,4 @@
-package com.vkochenkov.composeexample
+package com.vkochenkov.composeexample.domain
 
 class MainActivityViewModel {
     //todo should implement
