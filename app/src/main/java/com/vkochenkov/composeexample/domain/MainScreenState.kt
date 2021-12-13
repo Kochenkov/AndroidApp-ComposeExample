@@ -4,11 +4,12 @@ import com.vkochenkov.composeexample.data.entity.NoteEntity
 
 sealed class MainScreenState {
 
-    data class FillData(
-        val notesList: List<NoteEntity> = listOf(),
+    data class Regular(
         val title: String = "Add new note",
+        val notesList: List<NoteEntity> = listOf(),
         val addNoteBtnAction: (note: NoteEntity) -> Unit = {},
-        val noteItemBtnAction: (note: NoteEntity) -> Unit = {}
+        val noteItemBtnAction: (note: NoteEntity) -> Unit = {},
+        val message: String? = null
     ) : MainScreenState()
 
     data class Error(
