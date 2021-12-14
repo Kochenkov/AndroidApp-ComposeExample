@@ -11,6 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavBackStackEntry
@@ -32,13 +33,14 @@ fun AppContent() {
     val bottomBarItems = listOf(BottomBarItem.Notes, BottomBarItem.Info)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route?.substringBeforeLast("/")
+    val currentRoute = navBackStackEntry?.destination?.route
+    val routesWithBottomBar = remember { bottomBarItems.map { it.route.value } }
 
     ComposeExampleTheme {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
                 bottomBar = {
-                    if (currentRoute == MAIN_PREFIX) {
+                    if (currentRoute in routesWithBottomBar) {
                         BottomNavBar(bottomBarItems, navController, navBackStackEntry)
                     }
                 }
