@@ -1,21 +1,21 @@
-package com.vkochenkov.composeexample.domain
+package com.vkochenkov.composeexample.presentation.screens.notes
 
 import com.vkochenkov.composeexample.data.entity.NoteEntity
 
-sealed class MainScreenState {
+sealed class NotesScreenState {
 
-    data class Regular(
+    data class Standard(
         val notesList: List<NoteEntity> = listOf(),
         val addNoteBtnAction: (note: NoteEntity) -> Unit = {},
         val noteItemBtnAction: (note: NoteEntity) -> Unit = {},
         val message: String? = null
-    ) : MainScreenState()
+    ) : NotesScreenState()
 
     data class Error(
         val error: String
-    ) : MainScreenState()
+    ) : NotesScreenState()
 
     data class Loading(
-        val previousSate: MainScreenState?
-    ) : MainScreenState()
+        val previousSate: NotesScreenState?
+    ) : NotesScreenState()
 }

@@ -1,15 +1,16 @@
-package com.vkochenkov.composeexample.ui
+package com.vkochenkov.composeexample.presentation.screens.notes
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
@@ -18,53 +19,60 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vkochenkov.composeexample.data.entity.NoteEntity
-import com.vkochenkov.composeexample.domain.MainActivityViewModel
-import com.vkochenkov.composeexample.domain.MainScreenState
-import com.vkochenkov.composeexample.ui.theme.ComposeExampleTheme
 
 @Composable
-fun MainView(viewModel: MainActivityViewModel) {
+fun NotesScreen() {
 
+    val viewModel = viewModel<NotesViewModel>()
     val state by viewModel.screenState.observeAsState()
 
-    ComposeExampleTheme {
-        Surface(color = MaterialTheme.colors.background) {
-            when (state) {
-                is MainScreenState.Regular -> RegularView(screenState = state as MainScreenState.Regular)
-                is MainScreenState.Loading -> LoadingView(previousState = (state as MainScreenState.Loading).previousSate)
-                is MainScreenState.Error -> ErrorView(screenState = state as MainScreenState.Error)
-                else -> throw IllegalStateException()
-            }
-        }
-    }
-}
-
-@Composable
-fun ErrorView(screenState: MainScreenState.Error) {
-    //todo improve ui
-    Text(text = screenState.error)
-}
-
-@Composable
-fun LoadingView(previousState: MainScreenState?) {
-    ShowPreviousState(previousState)
-    CircularProgressIndicator()
-}
-
-@Composable
-private fun ShowPreviousState(previousState: MainScreenState?) {
-    when (previousState) {
-        is MainScreenState.Regular -> RegularView(screenState = previousState)
-        is MainScreenState.Error -> ErrorView(screenState = previousState)
+    when (state) {
+        is NotesScreenState.Standard -> RegularView(state as NotesScreenState.Standard)
+        is NotesScreenState.Loading -> LoadingView((state as NotesScreenState.Loading).previousSate)
+        is NotesScreenState.Error -> ErrorView(state as NotesScreenState.Error)
         else -> throw IllegalStateException()
     }
 }
 
 @Composable
-fun RegularView(screenState: MainScreenState.Regular) {
+fun ErrorView(screenState: NotesScreenState.Error) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = screenState.error)
+    }
+}
+
+@Composable
+fun LoadingView(previousState: NotesScreenState?) {
+    ShowPreviousState(previousState)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+private fun ShowPreviousState(previousState: NotesScreenState?) {
+    when (previousState) {
+        is NotesScreenState.Standard -> RegularView(previousState)
+        is NotesScreenState.Error -> ErrorView(previousState)
+        else -> throw IllegalStateException()
+    }
+}
+
+@Composable
+fun RegularView(screenState: NotesScreenState.Standard) {
     var textFromField by remember { mutableStateOf("") }
 
     Column() {
@@ -89,7 +97,7 @@ fun RegularView(screenState: MainScreenState.Regular) {
 }
 
 @Composable
-private fun ListView(screenState: MainScreenState.Regular) {
+private fun ListView(screenState: NotesScreenState.Standard) {
     if (screenState.notesList.isEmpty()) {
         //todo improve ui
         Text(text = "empty tables")

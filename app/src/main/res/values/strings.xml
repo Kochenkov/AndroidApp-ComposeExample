@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ComposeExample</string>
+
+    <!--strings-->
+    <string name="notes_bottom_str">Notes</string>
+    <string name="info_bottom_str">Info</string>
 </resources>

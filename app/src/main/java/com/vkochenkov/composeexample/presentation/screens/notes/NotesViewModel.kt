@@ -1,4 +1,4 @@
-package com.vkochenkov.composeexample.domain
+package com.vkochenkov.composeexample.presentation.screens.notes
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -12,7 +12,7 @@ import io.reactivex.MaybeObserver
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class MainActivityViewModel(
+class NotesViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -24,8 +24,8 @@ class MainActivityViewModel(
     }
 
     private var regularScreenStateData = initRegularScreenStateData()
-    private var _screenState: MutableLiveData<MainScreenState> = MutableLiveData(regularScreenStateData)
-    var screenState: LiveData<MainScreenState> = _screenState
+    private var _screenState: MutableLiveData<NotesScreenState> = MutableLiveData(regularScreenStateData)
+    var screenState: LiveData<NotesScreenState> = _screenState
 
     fun getAllNotes() {
         repository.getAllNotes()
@@ -33,7 +33,7 @@ class MainActivityViewModel(
                 object : MaybeObserver<List<NoteEntity>> {
                     override fun onSubscribe(d: Disposable) {
                         val previousState = _screenState.value
-                        _screenState.postValue(MainScreenState.Loading(previousState))
+                        _screenState.postValue(NotesScreenState.Loading(previousState))
                     }
 
                     override fun onSuccess(list: List<NoteEntity>) {
@@ -42,7 +42,7 @@ class MainActivityViewModel(
                     }
 
                     override fun onError(e: Throwable) {
-                        _screenState.postValue(MainScreenState.Error(e.toString()))
+                        _screenState.postValue(NotesScreenState.Error(e.toString()))
                     }
 
                     override fun onComplete() {
@@ -69,7 +69,7 @@ class MainActivityViewModel(
                 }
 
                 override fun onError(e: Throwable) {
-                    _screenState.postValue(MainScreenState.Error(e.toString()))
+                    _screenState.postValue(NotesScreenState.Error(e.toString()))
                 }
             })
     }
@@ -91,13 +91,13 @@ class MainActivityViewModel(
                 }
 
                 override fun onError(e: Throwable) {
-                    _screenState.postValue(MainScreenState.Error(e.toString()))
+                    _screenState.postValue(NotesScreenState.Error(e.toString()))
                 }
             })
     }
 
-    private fun initRegularScreenStateData(): MainScreenState.Regular {
-        return MainScreenState.Regular(
+    private fun initRegularScreenStateData(): NotesScreenState.Standard {
+        return NotesScreenState.Standard(
             addNoteBtnAction = { note -> insertNote(note) },
             noteItemBtnAction = { note -> deleteNote(note) }
         )

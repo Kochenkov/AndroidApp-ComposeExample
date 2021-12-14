@@ -1,4 +1,4 @@
-package com.vkochenkov.composeexample.ui.theme
+package com.vkochenkov.composeexample.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
