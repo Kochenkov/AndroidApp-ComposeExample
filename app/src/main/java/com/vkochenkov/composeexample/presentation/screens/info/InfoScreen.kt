@@ -21,25 +21,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.vkochenkov.composeexample.data.entity.NoteEntity
 
 @Composable
 fun InfoScreen(navController: NavController) {
-    
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Text(text = "This is application for test compose")
+    ) {
+        Text(
+            text = "This is application for test compose",
+            textAlign = TextAlign.Center,
+            fontSize = 24.sp)
         Spacer(modifier = Modifier.padding(16.dp))
-        Button(onClick = { 
+        Button(onClick = {
             navController.navigate("/other")
         }) {
-            Text(text = "navigate to other screen")
+            Text(text = "Navigate to other screen")
         }
     }
 }

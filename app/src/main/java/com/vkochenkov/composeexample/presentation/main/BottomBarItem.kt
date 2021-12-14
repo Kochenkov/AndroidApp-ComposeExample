@@ -9,8 +9,8 @@ import com.vkochenkov.composeexample.R
 enum class BottomBarItem(
     val title: Int,
     val icon: ImageVector,
-    val rout: String
+    val route: NavigationRoute
 ) {
-    Notes(R.string.notes_bottom_str, Icons.Filled.List, "/notes"),
-    Info(R.string.info_bottom_str, Icons.Filled.Info, "/info")
+    Notes(R.string.notes_bottom_str, Icons.Filled.List, NavigationRoute.Notes),
+    Info(R.string.info_bottom_str, Icons.Filled.Info, NavigationRoute.Info)
 }

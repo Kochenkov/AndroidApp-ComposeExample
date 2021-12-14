@@ -1,5 +1,6 @@
 package com.vkochenkov.composeexample.presentation.main
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -26,20 +28,25 @@ import com.vkochenkov.composeexample.presentation.ui.theme.ComposeExampleTheme
 
 @Composable
 fun AppContent() {
+
     val bottomBarItems = listOf(BottomBarItem.Notes, BottomBarItem.Info)
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route?.substringBeforeLast("/")
 
     ComposeExampleTheme {
         Surface(color = MaterialTheme.colors.background) {
             Scaffold(
                 bottomBar = {
-                    BottomNavBar(bottomBarItems, navController)
+                    if (currentRoute == MAIN_PREFIX) {
+                        BottomNavBar(bottomBarItems, navController, navBackStackEntry)
+                    }
                 }
-            ) { innerPaddingModifier ->
+            ) { paddingValues ->
                 AppNavigation(
                     navController = navController,
                     bottomBarItems = bottomBarItems,
-                    modifier = Modifier.padding(innerPaddingModifier),
+                    paddingValues = paddingValues,
                 )
             }
         }
@@ -50,38 +57,40 @@ fun AppContent() {
 fun AppNavigation(
     navController: NavHostController,
     bottomBarItems: List<BottomBarItem>,
-    modifier: Modifier
+    paddingValues: PaddingValues
 ) {
-
     NavHost(
         navController = navController,
-        startDestination = bottomBarItems[0].rout,
-        modifier = modifier
+        startDestination = bottomBarItems[0].route.value,
+        modifier = Modifier.padding(paddingValues)
     ) {
-        composable(BottomBarItem.Notes.rout) { NotesScreen() }
-        composable(BottomBarItem.Info.rout) { InfoScreen(navController) }
-        //todo сделать открытие полностью другого экрана, без нижнего бара
-        composable("/other") { OtherScreen(navController)}
+        composable(BottomBarItem.Notes.route.value) {
+            NotesScreen()
+        }
+        composable(BottomBarItem.Info.route.value) {
+            InfoScreen(navController)
+        }
+        composable(NavigationRoute.Other.value) {
+            OtherScreen()
+        }
     }
 }
 
 @Composable
-fun BottomNavBar(items: List<BottomBarItem>, navController: NavHostController) {
+fun BottomNavBar(
+    items: List<BottomBarItem>,
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry?,
+) {
     val context = LocalContext.current
     BottomNavigation {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
-        //val previousDestination = remember { mutableStateOf(bottomBarItems.first()) }
         items.forEach { item ->
-            val isSelected = currentDestination?.hierarchy
-                ?.any { it.route == item.rout } == true
+            val isSelected = currentDestination?.hierarchy?.any { it.route == item.route.value } == true
             BottomNavigationItem(
                 selected = isSelected,
                 onClick = {
-                    //кажется что не нужно
-                    //if (item == previousDestination.value) return@BottomNavigationItem
-                    //previousDestination.value = item
-                    navController.navigate(item.rout) {
+                    navController.navigate(item.route.value) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
