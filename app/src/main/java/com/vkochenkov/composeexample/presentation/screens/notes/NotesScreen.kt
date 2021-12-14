@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
@@ -27,7 +26,6 @@ import com.vkochenkov.composeexample.data.entity.NoteEntity
 
 @Composable
 fun NotesScreen() {
-
     val viewModel = viewModel<NotesViewModel>()
     val state by viewModel.screenState.observeAsState()
 
@@ -75,13 +73,18 @@ private fun ShowPreviousState(previousState: NotesScreenState?) {
 fun RegularView(screenState: NotesScreenState.Standard) {
     var textFromField by remember { mutableStateOf("") }
 
-    Column() {
-        Text(modifier = Modifier.fillMaxWidth(), text = "this is my app with compose")
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "this is my app with compose")
+        Spacer(modifier = Modifier.padding(8.dp))
         TextField(
             value = textFromField,
             onValueChange = { textFromField = it },
             label = { Text("Label") }
         )
+        Spacer(modifier = Modifier.padding(8.dp))
         Button(onClick = {
             screenState.addNoteBtnAction(
                 NoteEntity(title = textFromField)
@@ -92,6 +95,7 @@ fun RegularView(screenState: NotesScreenState.Standard) {
                 text = "add"
             )
         }
+        Spacer(modifier = Modifier.padding(8.dp))
         ListView(screenState)
     }
 }
@@ -115,12 +119,12 @@ private fun ListView(screenState: NotesScreenState.Standard) {
 @Composable
 private fun ListItemView(note: NoteEntity, btnAction: () -> Unit) {
     //todo improve ui
-    Card() {
+    Card(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.padding(8.dp)) {
             Text(text = note.title)
-            Button(onClick = btnAction) {
-                //todo text to resources
-                Text(text = "delete")
+            Button(
+                onClick = btnAction) {
+                Text(text = "Delete")
             }
         }
     }
